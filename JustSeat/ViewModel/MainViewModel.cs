@@ -1,4 +1,7 @@
 using GalaSoft.MvvmLight;
+using JustSeat.Model;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace JustSeat.ViewModel
 {
@@ -21,14 +24,21 @@ namespace JustSeat.ViewModel
         /// </summary>
         public MainViewModel()
         {
-            ////if (IsInDesignMode)
-            ////{
-            ////    // Code runs in Blend --> create design time data.
-            ////}
-            ////else
-            ////{
-            ////    // Code runs "for real"
-            ////}
+            //if (IsInDesignMode)
+            {
+                var side = 80;
+                var posMultiplier = 90;
+
+                Enumerable.Range(0, 5).ToList().ForEach(i =>
+                 {
+
+                     Guests.Add(new Guest() { Name = "Guest " + (i + 1) });
+                     Items.Add(new Table() { X = i * posMultiplier, Y = i * posMultiplier, Width = side, Length = side });
+                 });
+            }
         }
+
+        public ObservableCollection<Guest> Guests { get; set; } = new ObservableCollection<Guest>();
+        public ObservableCollection<ICanvasDisplayItem> Items { get; set; } = new ObservableCollection<ICanvasDisplayItem>();
     }
 }
