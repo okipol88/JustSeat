@@ -50,11 +50,11 @@
                                 </localAttached:Behaviors>
                             </ResourceDictionary>
                         </Style.Resources>
-                        <Setter Property="Canvas.Left" Value="{Binding Path=X}" />
-                        <Setter Property="Canvas.Top" Value="{Binding Path=Y}" />
+                        <Setter Property="Canvas.Left" Value="{Binding Path=X, Mode=TwoWay}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Path=Y, Mode=TwoWay}" />
                         <Setter Property="Width" Value="{Binding Path=Width}" />
                         <Setter Property="Height" Value="{Binding Path=Length}" />
-                        <!--<Setter Property="localAttached:SupplementaryInteraction.Behaviors" Value="{StaticResource behaviors}"/>--> 
+                        <Setter Property="localAttached:SupplementaryInteraction.Behaviors" Value="{StaticResource behaviors}"/> 
                     </Style>
                 </ItemsControl.ItemContainerStyle>
                 
@@ -62,11 +62,11 @@
                     <DataTemplate>
 
                         <Border Margin="2" Background="Green" >
-                            <localAttached:SupplementaryInteraction.Behaviors>
+                            <!--<localAttached:SupplementaryInteraction.Behaviors>
                                 <localAttached:Behaviors>
                                     <localBehaviors:DragBehavior />
                                 </localAttached:Behaviors>
-                            </localAttached:SupplementaryInteraction.Behaviors>
+                            </localAttached:SupplementaryInteraction.Behaviors>-->
                             <Rectangle>
                             </Rectangle>
                         </Border>

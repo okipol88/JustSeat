@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Media;
@@ -14,9 +15,8 @@ namespace JustSeat.Behaviors
 {
     public class DragBehavior: Behavior<UIElement>
     {
-        public readonly TranslateTransform Transform = new TranslateTransform();
-        private System.Windows.Point _elementStartPosition2;
-        private System.Windows.Point _mouseStartPosition2;
+        System.Windows.Point? _dragStart;
+        private Canvas _canvas;
 
         protected override void OnAttached()
         {
@@ -26,7 +26,9 @@ namespace JustSeat.Behaviors
             AssociatedObject.MouseLeftButtonUp += ElementOnMouseLeftButtonUp;
             AssociatedObject.MouseMove += ElementOnMouseMove;
 
-            AssociatedObject.RenderTransform = Transform;
+            _canvas = GetParentCanvas();
+            if (_canvas == null)
+                throw new InvalidOperationException("Canvas could not be found");
         }
 
         protected override void OnDetaching()
@@ -38,32 +40,43 @@ namespace JustSeat.Behaviors
             AssociatedObject.MouseMove -= ElementOnMouseMove;
         }
 
+        private Canvas GetParentCanvas()
+        {
+            Canvas canvas = null;
+            var parentItem = AssociatedObject as DependencyObject;
+            while (canvas == null && parentItem != null)
+            {
+                DependencyObject parent = VisualTreeHelper.GetParent(parentItem);
+                if (parent is Canvas)
+                    canvas = (Canvas)parent;
+                else
+                    parentItem = parent;
+            }
+
+            return canvas;
+        }
+
         private void ElementOnMouseLeftButtonDown(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            var parent = Application.Current.MainWindow;
-            _mouseStartPosition2 = mouseButtonEventArgs.GetPosition(parent);
-            ((UIElement)sender).CaptureMouse();
-
-            Debug.WriteLine("Starting position {0}", _mouseStartPosition2);
+            _dragStart = mouseButtonEventArgs.GetPosition(AssociatedObject);
+            AssociatedObject.CaptureMouse();
         }
 
         private void ElementOnMouseLeftButtonUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            ((UIElement)sender).ReleaseMouseCapture();
-            _elementStartPosition2.X = Transform.X;
-            _elementStartPosition2.Y = Transform.Y;
+            _dragStart = null;
+            AssociatedObject.ReleaseMouseCapture();
         }
 
         private void ElementOnMouseMove(object sender, MouseEventArgs mouseEventArgs)
         {
-            var parent = Application.Current.MainWindow;
-            var mousePos = mouseEventArgs.GetPosition(parent);
-            var diff = (mousePos - _mouseStartPosition2);
-            if (!((UIElement)sender).IsMouseCaptured) return;
-            Transform.X = _elementStartPosition2.X + diff.X;
-            Transform.Y = _elementStartPosition2.Y + diff.Y;
-
-            Debug.WriteLine("Go to position {0}, {1}", Transform.X, Transform.Y);
+            var start = _dragStart;
+            if (start != null && mouseEventArgs.LeftButton == MouseButtonState.Pressed)
+            {
+                var p2 = mouseEventArgs.GetPosition(_canvas);
+                Canvas.SetLeft(AssociatedObject, p2.X -_dragStart.Value.X);
+                Canvas.SetTop(AssociatedObject, p2.Y - _dragStart.Value.Y);
+            }
         }
     }
 }
