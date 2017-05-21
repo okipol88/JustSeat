@@ -74,6 +74,9 @@
     </ApplicationDefinition>
     <Compile Include="AttachedProperties\SupplementaryInteraction.cs" />
     <Compile Include="Behaviors\DragBehavior.cs" />
+    <Compile Include="Converter\ValueWithAdditionConverter.cs" />
+    <Compile Include="Model\Chair.cs" />
+    <Compile Include="Model\Guest.cs" />
     <Compile Include="Model\Table.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />

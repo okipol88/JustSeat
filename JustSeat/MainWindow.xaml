@@ -9,8 +9,16 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:localAttached="clr-namespace:JustSeat.AttachedProperties"
         Title="MainWindow" Height="350" Width="525"
+        xmlns:localConvertes="clr-namespace:JustSeat.Converter"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         >
+    <Window.Resources>
+        <ResourceDictionary>
+            <sys:Double x:Key="tableSize">
+                64</sys:Double>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" MinWidth="100"/>
@@ -52,8 +60,8 @@
                         </Style.Resources>
                         <Setter Property="Canvas.Left" Value="{Binding Path=X, Mode=TwoWay}" />
                         <Setter Property="Canvas.Top" Value="{Binding Path=Y, Mode=TwoWay}" />
-                        <Setter Property="Width" Value="{Binding Path=Width}" />
-                        <Setter Property="Height" Value="{Binding Path=Length}" />
+                        <Setter Property="Width" Value="{Binding Path=Width, Converter={localConvertes:ValueWithAdditionConverter AdditionValue={StaticResource tableSize}}}" />
+                        <Setter Property="Height" Value="{Binding Path=Length, Converter={localConvertes:ValueWithAdditionConverter AdditionValue={StaticResource tableSize}}}" />
                         <Setter Property="localAttached:SupplementaryInteraction.Behaviors" Value="{StaticResource behaviors}"/> 
                     </Style>
                 </ItemsControl.ItemContainerStyle>
@@ -61,15 +69,37 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
-                        <Border Margin="2" Background="Green" >
-                            <!--<localAttached:SupplementaryInteraction.Behaviors>
-                                <localAttached:Behaviors>
-                                    <localBehaviors:DragBehavior />
-                                </localAttached:Behaviors>
-                            </localAttached:SupplementaryInteraction.Behaviors>-->
-                            <Rectangle>
-                            </Rectangle>
-                        </Border>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="{Binding Width}"/>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="{Binding Length}"/>
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <ItemsControl ItemsSource="{Binding TopChairs}" Grid.Column="1">
+                                
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="2,1,2,1" Width="30" Height="30">
+                                            <Ellipse  Fill="Wheat"  />
+                                            <Viewbox>
+                                                <Label Content="{Binding Person}" Foreground="Black"/>
+                                            </Viewbox>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Border Margin="2" Background="Green" Grid.Column="1" Grid.Row="1" />
+                        </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

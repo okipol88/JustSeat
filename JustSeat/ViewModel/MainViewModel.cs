@@ -35,6 +35,8 @@ namespace JustSeat.ViewModel
                      Guests.Add(new Guest() { Name = "Guest " + (i + 1) });
                      Items.Add(new Table() { X = i * posMultiplier, Y = i * posMultiplier, Width = side, Length = side });
                  });
+
+                ((Table)Items[0]).TopChairs[0].Person = Guests.First();
             }
         }
 

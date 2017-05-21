@@ -17,22 +17,20 @@ namespace JustSeat.Model
         BrideFamily
     }
 
-    public class Guest
-    {
-        public GuestType GuestType { get; set; }
-
-        public string Name { get; set; }
-
-        public string Surname { get; set; }
-    }
-
-    public class Chair
-    {
-        public Guest Person { get; set; }
-    }
-
     public class Table: ICanvasDisplayItem
     {
+        public Table()
+        {
+            Enumerable.Range(0, 2)
+                .ToList().ForEach((x) => 
+                {
+                    TopChairs.Add(new Chair());
+                    BottomChairs.Add(new Chair());
+                    LeftChairs.Add(new Chair());
+                    RightChairs.Add(new Chair());
+                });
+        }
+
         public double Length { get; set; }
         public double Width { get; set; }
 
