@@ -4,7 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JustSeat"
+        xmlns:localBehaviors="clr-namespace:JustSeat.Behaviors"
         mc:Ignorable="d"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:localAttached="clr-namespace:JustSeat.AttachedProperties"
         Title="MainWindow" Height="350" Width="525"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         >
@@ -40,16 +43,30 @@
                 
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
+                        <Style.Resources>
+                            <ResourceDictionary>
+                                <localAttached:Behaviors x:Key="behaviors" x:Shared="False">
+                                    <localBehaviors:DragBehavior />
+                                </localAttached:Behaviors>
+                            </ResourceDictionary>
+                        </Style.Resources>
                         <Setter Property="Canvas.Left" Value="{Binding Path=X}" />
                         <Setter Property="Canvas.Top" Value="{Binding Path=Y}" />
                         <Setter Property="Width" Value="{Binding Path=Width}" />
                         <Setter Property="Height" Value="{Binding Path=Length}" />
+                        <!--<Setter Property="localAttached:SupplementaryInteraction.Behaviors" Value="{StaticResource behaviors}"/>--> 
                     </Style>
                 </ItemsControl.ItemContainerStyle>
                 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="2" Background="Green">
+
+                        <Border Margin="2" Background="Green" >
+                            <localAttached:SupplementaryInteraction.Behaviors>
+                                <localAttached:Behaviors>
+                                    <localBehaviors:DragBehavior />
+                                </localAttached:Behaviors>
+                            </localAttached:SupplementaryInteraction.Behaviors>
                             <Rectangle>
                             </Rectangle>
                         </Border>
