@@ -11,12 +11,15 @@
         Title="MainWindow" Height="350" Width="525"
         xmlns:localConvertes="clr-namespace:JustSeat.Converter"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:dd="urn:gong-wpf-dragdrop"
+        xmlns:localHelpers="clr-namespace:JustSeat.Helpers"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         >
     <Window.Resources>
         <ResourceDictionary>
             <sys:Double x:Key="tableSize">
                 64</sys:Double>
+            <localHelpers:BindingProxy  x:Key="bindingProxy" Data="{Binding}"></localHelpers:BindingProxy>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -27,24 +30,31 @@
 
         <DockPanel>
 
-            <Button DockPanel.Dock="Bottom">Add</Button>
-            <ListView ItemsSource="{Binding Guests}">
-            <ListView.View>
-                <GridView>
-                        <GridViewColumn x:Name="Name" DisplayMemberBinding="{Binding Name}" />
+            <Button DockPanel.Dock="Bottom" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding}">Add</Button>
+            <ListView ItemsSource="{Binding Guests}" dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True">
+                <ListView.View>
+                    <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Name}" />
+                        </GridView>
+                </ListView.View>
+            </ListView>
+            <ListView ItemsSource="{Binding Guests}" dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn DisplayMemberBinding="{Binding Name}" />
                     </GridView>
-            </ListView.View>
-        </ListView>
+                </ListView.View>
+            </ListView>
         </DockPanel>
         <DockPanel Grid.Column="2">
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="Blue" MinHeight="44">
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="Blue" MinHeight="44" >
                 <Button>Table</Button>
             </StackPanel>
-            
-            <ItemsControl ItemsSource="{Binding Items}">
+
+            <ItemsControl ItemsSource="{Binding Items}"  >
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas Background="Red">
+                        <Canvas Background="Red" >
                         </Canvas>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
@@ -80,7 +90,7 @@
                                 <RowDefinition Height="{Binding Length}"/>
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <ItemsControl ItemsSource="{Binding TopChairs}" Grid.Column="1">
+                            <ItemsControl ItemsSource="{Binding TopChairs}" Grid.Column="1"  >
                                 
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -89,7 +99,8 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Margin="2,1,2,1" Width="30" Height="30">
+                                        <Grid Margin="2,1,2,1" Width="30" Height="30" dd:DragDrop.IsDropTarget="True" 
+                                              dd:DragDrop.DropHandler="{Binding Data.GuestOnChairDropHandler, Source={StaticResource bindingProxy}}" >
                                             <Ellipse  Fill="Wheat"  />
                                             <Viewbox>
                                                 <Label Content="{Binding Person}" Foreground="Black"/>

@@ -1,5 +1,7 @@
 using GalaSoft.MvvmLight;
+using GongSolutions.Wpf.DragDrop;
 using JustSeat.Model;
+using JustSeat.ViewModel.Handlers;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -42,5 +44,9 @@ namespace JustSeat.ViewModel
 
         public ObservableCollection<Guest> Guests { get; set; } = new ObservableCollection<Guest>();
         public ObservableCollection<ICanvasDisplayItem> Items { get; set; } = new ObservableCollection<ICanvasDisplayItem>();
+        public ObservableCollection<ICanvasDisplayItem> Items2 { get; set; } = new ObservableCollection<ICanvasDisplayItem>();
+
+        public IDropTarget GuestOnChairDropHandler { get; set; } = new GuestToSeatDropHandler();
+        
     }
 }

@@ -1,0 +1,44 @@
+﻿using GongSolutions.Wpf.DragDrop;
+using JustSeat.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+
+namespace JustSeat.ViewModel.Handlers
+{
+    public class GuestToSeatDropHandler : IDropTarget
+    {
+        public void DragOver(IDropInfo dropInfo)
+        {
+            // sketchy - But i dont know the nuts and bolts of the framework to assign the target item in a clean way
+            Chair chair = ExtractChair(dropInfo);
+            if (chair == null)
+                return;
+
+            dropInfo.DropTargetAdorner = typeof(DropTargetHighlightAdorner);
+            dropInfo.Effects = DragDropEffects.Move;
+        }
+
+        private static Chair ExtractChair(IDropInfo dropInfo)
+        {
+            return (dropInfo.VisualTarget as FrameworkElement)?.DataContext as Chair;
+        }
+
+        public void Drop(IDropInfo dropInfo)
+        {            
+            // sketchy - But i dont know the nuts and bolts of the framework to assign the target item in a clean way
+            Chair chair = ExtractChair(dropInfo);
+            var guest = dropInfo.Data as Guest;
+            if (chair == null || guest == null)
+                return;
+            chair.Person = guest;
+
+            var collection = dropInfo.DragInfo.SourceCollection as ICollection<Guest>;
+            if (collection != null)
+                collection.Remove(guest);
+        }
+    }
+}

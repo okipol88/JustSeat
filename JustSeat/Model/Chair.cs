@@ -1,7 +1,22 @@
-﻿namespace JustSeat.Model
+﻿using System;
+using GongSolutions.Wpf.DragDrop;
+using GalaSoft.MvvmLight;
+using System.Windows;
+
+namespace JustSeat.Model
 {
-    public class Chair
+    public class Chair: ViewModelBase
     {
-        public Guest Person { get; set; }
+        private Guest _person;
+
+        public Guest Person
+        {
+            get { return _person; }
+            set
+            { 
+                _person = value;
+                RaisePropertyChanged(() => Person, _person, value, true);
+            }
+        }
     }
 }
