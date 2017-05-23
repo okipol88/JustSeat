@@ -9,8 +9,20 @@ using System.Windows;
 
 namespace JustSeat.ViewModel.Handlers
 {
+    internal class GuestDroppedEventArgs:EventArgs
+    {
+        public GuestDroppedEventArgs(Guest guest)
+        {
+            Guest = guest ?? throw new ArgumentNullException(nameof(guest));
+        }
+
+        public Guest Guest { get; private set; }
+    }
+
     public class GuestToSeatDropHandler : IDropTarget
     {
+        internal event EventHandler<GuestDroppedEventArgs> GuestDropped;
+
         public void DragOver(IDropInfo dropInfo)
         {
             // sketchy - But i dont know the nuts and bolts of the framework to assign the target item in a clean way
@@ -39,6 +51,8 @@ namespace JustSeat.ViewModel.Handlers
             var collection = dropInfo.DragInfo.SourceCollection as ICollection<Guest>;
             if (collection != null)
                 collection.Remove(guest);
+
+            GuestDropped?.Invoke(this, new GuestDroppedEventArgs(guest));
         }
     }
 }

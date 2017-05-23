@@ -1,9 +1,11 @@
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using GongSolutions.Wpf.DragDrop;
 using JustSeat.Model;
 using JustSeat.ViewModel.Handlers;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 
 namespace JustSeat.ViewModel
 {
@@ -39,14 +41,41 @@ namespace JustSeat.ViewModel
                  });
 
                 ((Table)Items[0]).TopChairs[0].Person = Guests.First();
+
+                RemoveGuestCommand = new RelayCommand<Chair>(
+                (c) =>
+                {
+                    var person = c.Person;
+                    if (c == null || person == null)
+                        return;
+                    c.Person = null;
+
+                    Guests.Add(person);
+                },
+                (c) =>
+                {
+                    if (c == null)
+                        return false;
+
+                    return c.Person != null;
+                });
             }
+
+            var dropHandler = new GuestToSeatDropHandler();
+            dropHandler.GuestDropped += (o, e) =>
+            {
+                RemoveGuestCommand.RaiseCanExecuteChanged();
+            };
+            GuestOnChairDropHandler = dropHandler;
         }
 
         public ObservableCollection<Guest> Guests { get; set; } = new ObservableCollection<Guest>();
         public ObservableCollection<ICanvasDisplayItem> Items { get; set; } = new ObservableCollection<ICanvasDisplayItem>();
         public ObservableCollection<ICanvasDisplayItem> Items2 { get; set; } = new ObservableCollection<ICanvasDisplayItem>();
 
-        public IDropTarget GuestOnChairDropHandler { get; set; } = new GuestToSeatDropHandler();
-        
+        public IDropTarget GuestOnChairDropHandler { get; private set; }
+
+
+        public RelayCommand<Chair> RemoveGuestCommand { get; private set; }
     }
 }

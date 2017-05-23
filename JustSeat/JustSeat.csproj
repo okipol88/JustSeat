@@ -82,7 +82,6 @@
     <Compile Include="Model\Chair.cs" />
     <Compile Include="Model\Guest.cs" />
     <Compile Include="Model\Table.cs" />
-    <Compile Include="ViewModel\Handler.cs" />
     <Compile Include="ViewModel\Handlers\GuestToSeatDropHandler.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />

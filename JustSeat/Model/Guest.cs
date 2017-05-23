@@ -7,8 +7,17 @@ namespace JustSeat.Model
     {
         private string _name;
         private string _surname;
+        private GuestType _guestType;
 
-        public GuestType GuestType { get; set; }
+        public GuestType GuestType
+        {
+            get { return _guestType; }
+            set
+            {
+                _guestType = value;
+                RaisePropertyChanged(() => GuestType);
+            }
+        }
 
         public string Name
         {
