@@ -87,13 +87,6 @@
                                 <Grid.Resources>
                                     <localHelpers:BindingProxy x:Key="chairProxy" Data="{Binding}" />
                                 </Grid.Resources>
-                                <Grid.ContextMenu>
-                                    <ContextMenu>
-                                        <ContextMenu.Items>
-                                            <MenuItem Header="Remove" Command="{Binding Data.RemoveGuestCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding Path=Data, Source={StaticResource chairProxy}}" />
-                                        </ContextMenu.Items>
-                                    </ContextMenu>
-                                </Grid.ContextMenu>
 
                                 <Button Command="{Binding Data.RemovePersonOrChairCommand, Source={StaticResource bindingProxy}}">
                                     <Button.CommandParameter>
@@ -157,7 +150,7 @@
 
         <DockPanel>
 
-            <Button DockPanel.Dock="Bottom" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding}">Add</Button>
+            <Button DockPanel.Dock="Bottom">Add</Button>
             <ListView ItemsSource="{Binding Guests}" dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True">
                 <ListView.View>
                     <GridView>
@@ -168,7 +161,7 @@
         </DockPanel>
         <DockPanel Grid.Column="2">
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="Blue" MinHeight="44" >
-                <Button>Table</Button>
+                <Button Command="{Binding AddTableCommand}">Add Table</Button>
             </StackPanel>
 
             <ItemsControl ItemsSource="{Binding Items}"  >
@@ -211,9 +204,16 @@
                             </Grid.RowDefinitions>
                             <ItemsControl ItemsSource="{Binding TopChairs}" Grid.Column="1" Style="{StaticResource chairItemsControlStyle}" />
                             <ItemsControl ItemsSource="{Binding LeftChairs}" Grid.Row="1" Style="{StaticResource verticalChairItemsControlStyle}" />
-                            <ItemsControl ItemsSource="{Binding RightChairs}" Grid.Row="2" Grid.Column="1" Style="{StaticResource chairItemsControlStyle}" />
-                            <ItemsControl ItemsSource="{Binding BottomChairs}" Grid.Row="1" Grid.Column="2" Style="{StaticResource verticalChairItemsControlStyle}" />
+                            <ItemsControl ItemsSource="{Binding BottomChairs}" Grid.Row="2" Grid.Column="1" Style="{StaticResource chairItemsControlStyle}" />
+                            <ItemsControl ItemsSource="{Binding RightChairs}" Grid.Row="1" Grid.Column="2" Style="{StaticResource verticalChairItemsControlStyle}" />
                             <Border Margin="2" Background="Green" Grid.Column="1" Grid.Row="1" >
+                                <Border.ContextMenu>
+                                    <ContextMenu>
+                                        <ContextMenu.Items>
+                                            <MenuItem Header="Remove table" Command="{Binding Data.RemoveTableCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding }" />
+                                        </ContextMenu.Items>
+                                    </ContextMenu>
+                                </Border.ContextMenu>
                                 <DockPanel>
                                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center">
                                         <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddTopChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
