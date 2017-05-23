@@ -99,6 +99,24 @@
                                     <Button.Template>
                                         <ControlTemplate>
                                             <Grid>
+                                                <Grid.ToolTip>
+                                                    <ToolTip>
+                                                        <StackPanel>
+                                                            <TextBlock FontWeight="Bold" Text="{Binding Person}">
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="{x:Type TextBlock}">
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding Person}" Value="{x:Null}">
+                                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                            <TextBlock>Click to remove</TextBlock>
+                                                        </StackPanel>
+                                                    </ToolTip>
+                                                </Grid.ToolTip>
                                                 <Ellipse  Fill="Wheat"  />
                                                 <Viewbox>
                                                     <Label Content="{Binding Person}" Foreground="Black"/>
