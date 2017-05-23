@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JustSeat"
+        xmlns:localParameters="clr-namespace:JustSeat.Parameters"
         xmlns:localBehaviors="clr-namespace:JustSeat.Behaviors"
         mc:Ignorable="d"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -94,10 +95,43 @@
                                     </ContextMenu>
                                 </Grid.ContextMenu>
 
-                                <Ellipse  Fill="Wheat"  />
-                                <Viewbox>
-                                    <Label Content="{Binding Person}" Foreground="Black"/>
-                                </Viewbox>
+                                <Button Command="{Binding Data.RemovePersonOrChairCommand, Source={StaticResource bindingProxy}}">
+                                    <Button.CommandParameter>
+                                        <MultiBinding Converter="{localConvertes:ChairWithinSetMultiValueConverter}">
+                                            <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}"/>
+                                            <Binding />
+                                            <Binding Path="Person"/>
+                                        </MultiBinding>
+                                    </Button.CommandParameter>
+                                    <Button.Template>
+                                        <ControlTemplate>
+                                            <Grid>
+                                                <Ellipse  Fill="Wheat"  />
+                                                <Viewbox>
+                                                    <Label Content="{Binding Person}" Foreground="Black"/>
+                                                </Viewbox>
+                                                <Grid Name="parent" Visibility="Hidden" IsHitTestVisible="False">
+                                                    <Line  X1="0" Y1="0" X2="{Binding ElementName='parent', Path='ActualWidth'}" Y2="{Binding ElementName='parent', Path='ActualHeight'}"  Stroke="Black" StrokeThickness="4" />
+                                                    <Line  X1="0" Y1="{Binding ElementName='parent', Path='ActualHeight'}" X2="{Binding ElementName='parent', Path='ActualWidth'}" Y2="0" Stroke="Black" StrokeThickness="4" />
+                                                </Grid>
+                                            </Grid>
+                                            
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="parent" Property="Visibility" Value="Visible" />
+                                                    <Trigger.EnterActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="parent" Storyboard.TargetProperty="Opacity" 
+                                                                                 From="0" To="1" RepeatBehavior="Forever" AutoReverse="True" Duration="0:0:0.3"/>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </Trigger.EnterActions>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
                             </Grid>
                         </DataTemplate>
                     </Setter.Value>

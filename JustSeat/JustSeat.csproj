@@ -83,11 +83,13 @@
     </ApplicationDefinition>
     <Compile Include="AttachedProperties\SupplementaryInteraction.cs" />
     <Compile Include="Behaviors\DragBehavior.cs" />
+    <Compile Include="Converter\ChairWithinSetMultiValueConverter.cs" />
     <Compile Include="Converter\ValueWithAdditionConverter.cs" />
     <Compile Include="Helpers\BindingProxy.cs" />
     <Compile Include="Model\Chair.cs" />
     <Compile Include="Model\Guest.cs" />
     <Compile Include="Model\Table.cs" />
+    <Compile Include="Parameters\ChairRemovalParameter.cs" />
     <Compile Include="ViewModel\Handlers\GuestToSeatDropHandler.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />

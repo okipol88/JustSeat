@@ -2,6 +2,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GongSolutions.Wpf.DragDrop;
 using JustSeat.Model;
+using JustSeat.Parameters;
 using JustSeat.ViewModel.Handlers;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -59,12 +60,33 @@ namespace JustSeat.ViewModel
 
                     return c.Person != null;
                 });
+
+                RemovePersonOrChairCommand = new RelayCommand<ChairRemovalParameter>((param) =>
+                  {
+                      if (param == null)
+                          return;
+
+                      if (param.ChairToRemove.Person != null)
+                      {
+                          Guests.Add(param.ChairToRemove.Person);
+                          param.ChairToRemove.Person = null;
+                      }
+                      else
+                      {
+                          param.Table.TopChairs.Remove(param.ChairToRemove);
+                          param.Table.BottomChairs.Remove(param.ChairToRemove);
+                          param.Table.LeftChairs.Remove(param.ChairToRemove);
+                          param.Table.RightChairs.Remove(param.ChairToRemove);
+                      }
+
+                  });
             }
 
             var dropHandler = new GuestToSeatDropHandler();
             dropHandler.GuestDropped += (o, e) =>
             {
                 RemoveGuestCommand.RaiseCanExecuteChanged();
+                RemovePersonOrChairCommand.RaiseCanExecuteChanged();
             };
             GuestOnChairDropHandler = dropHandler;
         }
@@ -79,6 +101,10 @@ namespace JustSeat.ViewModel
         public RelayCommand<Table> AddTopChairCommand { get; } = new RelayCommand<Table>((table) => { table.TopChairs.Add(new Chair()); });
         public RelayCommand<Table> AddBottomChairCommand { get; } = new RelayCommand<Table>((table) => { table.BottomChairs.Add(new Chair()); });
         public RelayCommand<Table> AddLeftChairCommand { get; } = new RelayCommand<Table>((table) => { table.LeftChairs.Add(new Chair()); });
-        public RelayCommand<Table> AddRighthairCommand { get; } = new RelayCommand<Table>((table) => { table.RightChairs.Add(new Chair()); });
+        public RelayCommand<Table> AddRightChairCommand { get; } = new RelayCommand<Table>((table) => { table.RightChairs.Add(new Chair()); });
+
+
+        public RelayCommand<ChairRemovalParameter> RemovePersonOrChairCommand { get; private set; }
+
     }
 }
