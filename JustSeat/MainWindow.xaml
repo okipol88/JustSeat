@@ -13,16 +13,105 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:dd="urn:gong-wpf-dragdrop"
         xmlns:localHelpers="clr-namespace:JustSeat.Helpers"
+        xmlns:wpfConverters="http://schemas.kent.boogaart.com/converters"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         >
     <Window.Resources>
         <ResourceDictionary>
-            <sys:Double x:Key="tableSize">
-                64</sys:Double>
+            <sys:Double x:Key="tableSize">64</sys:Double>
+            
             <localHelpers:BindingProxy  x:Key="bindingProxy" Data="{Binding}"></localHelpers:BindingProxy>
+            
             <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
                 <Setter Property="Margin" Value="2" />
                 <Setter Property="Padding" Value="5,2,5,2" />
+            </Style>
+
+            <Style x:Key="plusButtonStyle" TargetType="{x:Type Button}" >
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Grid>
+                                <Ellipse Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Fill="LightBlue" />
+                                <TextBlock Text="+" FontSize="15" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Width" Value="16" />
+                <Setter Property="Height" Value="16" />
+                <Setter Property="Margin" Value="2" />
+                <Setter Property="Opacity" Value="0.4" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True" >
+                        <Setter Property="Opacity" Value="1" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="minusButtonStyle" TargetType="{x:Type Button}" >
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Grid>
+                                <Ellipse Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Fill="DarkRed" />
+                                <TextBlock Text="-" FontSize="15" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Width" Value="16" />
+                <Setter Property="Height" Value="16" />
+                <Setter Property="Margin" Value="2" />
+                <Setter Property="Opacity" Value="0.4" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True" >
+                        <Setter Property="Opacity" Value="1" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="chairItemsControlStyle" TargetType="{x:Type ItemsControl}">
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <Grid Margin="2,1,2,1" Width="30" Height="30" dd:DragDrop.IsDropTarget="True" 
+                                              dd:DragDrop.DropHandler="{Binding Data.GuestOnChairDropHandler, Source={StaticResource bindingProxy}}" >
+                                <Grid.Resources>
+                                    <localHelpers:BindingProxy x:Key="chairProxy" Data="{Binding}" />
+                                </Grid.Resources>
+                                <Grid.ContextMenu>
+                                    <ContextMenu>
+                                        <ContextMenu.Items>
+                                            <MenuItem Header="Remove" Command="{Binding Data.RemoveGuestCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding Path=Data, Source={StaticResource chairProxy}}" />
+                                        </ContextMenu.Items>
+                                    </ContextMenu>
+                                </Grid.ContextMenu>
+
+                                <Ellipse  Fill="Wheat"  />
+                                <Viewbox>
+                                    <Label Content="{Binding Person}" Foreground="Black"/>
+                                </Viewbox>
+                            </Grid>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="verticalChairItemsControlStyle" TargetType="{x:Type ItemsControl}" BasedOn="{StaticResource chairItemsControlStyle}">
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
             </Style>
         </ResourceDictionary>
     </Window.Resources>
@@ -75,7 +164,6 @@
                 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -87,37 +175,27 @@
                                 <RowDefinition Height="{Binding Length}"/>
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <ItemsControl ItemsSource="{Binding TopChairs}" Grid.Column="1"  >
-                                
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Margin="2,1,2,1" Width="30" Height="30" dd:DragDrop.IsDropTarget="True" 
-                                              dd:DragDrop.DropHandler="{Binding Data.GuestOnChairDropHandler, Source={StaticResource bindingProxy}}" >
-                                            <Grid.Resources>
-                                                <localHelpers:BindingProxy x:Key="chairProxy" Data="{Binding}" />
-                                            </Grid.Resources>
-                                            <Grid.ContextMenu>
-                                                <ContextMenu>
-                                                    <ContextMenu.Items>
-                                                        <MenuItem Header="Remove" Command="{Binding Data.RemoveGuestCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding Path=Data, Source={StaticResource chairProxy}}" />
-                                                    </ContextMenu.Items>
-                                                </ContextMenu>
-                                            </Grid.ContextMenu>
-                                            
-                                            <Ellipse  Fill="Wheat"  />
-                                            <Viewbox>
-                                                <Label Content="{Binding Person}" Foreground="Black"/>
-                                            </Viewbox>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            <Border Margin="2" Background="Green" Grid.Column="1" Grid.Row="1" />
+                            <ItemsControl ItemsSource="{Binding TopChairs}" Grid.Column="1" Style="{StaticResource chairItemsControlStyle}" />
+                            <ItemsControl ItemsSource="{Binding LeftChairs}" Grid.Row="1" Style="{StaticResource verticalChairItemsControlStyle}" />
+                            <ItemsControl ItemsSource="{Binding RightChairs}" Grid.Row="2" Grid.Column="1" Style="{StaticResource chairItemsControlStyle}" />
+                            <ItemsControl ItemsSource="{Binding BottomChairs}" Grid.Row="1" Grid.Column="2" Style="{StaticResource verticalChairItemsControlStyle}" />
+                            <Border Margin="2" Background="Green" Grid.Column="1" Grid.Row="1" >
+                                <DockPanel>
+                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center">
+                                        <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddTopChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+                                        <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddBottomChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" DockPanel.Dock="Left" VerticalAlignment="Center">
+                                        <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddLeftChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" DockPanel.Dock="Right" VerticalAlignment="Center">
+                                        <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddRightChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
+                                    </StackPanel>
+                                    <Grid></Grid>
+                                </DockPanel>
+                            </Border>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

@@ -71,11 +71,14 @@ namespace JustSeat.ViewModel
 
         public ObservableCollection<Guest> Guests { get; set; } = new ObservableCollection<Guest>();
         public ObservableCollection<ICanvasDisplayItem> Items { get; set; } = new ObservableCollection<ICanvasDisplayItem>();
-        public ObservableCollection<ICanvasDisplayItem> Items2 { get; set; } = new ObservableCollection<ICanvasDisplayItem>();
 
         public IDropTarget GuestOnChairDropHandler { get; private set; }
 
-
         public RelayCommand<Chair> RemoveGuestCommand { get; private set; }
+
+        public RelayCommand<Table> AddTopChairCommand { get; } = new RelayCommand<Table>((table) => { table.TopChairs.Add(new Chair()); });
+        public RelayCommand<Table> AddBottomChairCommand { get; } = new RelayCommand<Table>((table) => { table.BottomChairs.Add(new Chair()); });
+        public RelayCommand<Table> AddLeftChairCommand { get; } = new RelayCommand<Table>((table) => { table.LeftChairs.Add(new Chair()); });
+        public RelayCommand<Table> AddRighthairCommand { get; } = new RelayCommand<Table>((table) => { table.RightChairs.Add(new Chair()); });
     }
 }
