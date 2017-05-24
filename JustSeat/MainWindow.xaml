@@ -186,8 +186,7 @@
             <ItemsControl ItemsSource="{Binding Items}"  >
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas Background="Red" >
-                        </Canvas>
+                        <Canvas Background="Red"  />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 
@@ -214,14 +213,35 @@
                             <ContentControl.Template>
                                 <ControlTemplate>
                                     <Grid>
-                                        <ContentPresenter x:Name="Presenter" Content="{TemplateBinding ContentControl.Content}"
-                              Margin="{TemplateBinding Padding}"/>
-                                        <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}" Grid.Column="1" Grid.Row="2" Height="6" Width="12" VerticalAlignment="Top"/>
-                                        <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="6" Width="12" VerticalAlignment="Bottom"/>
-                                        <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="12" Width="6" VerticalAlignment="Center" HorizontalAlignment="Left" />
-                                        <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="12" Width="6" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        <ContentPresenter x:Name="Presenter" Content="{TemplateBinding ContentControl.Content}" Margin="{TemplateBinding Padding}"/>
+                                        
+                                        <Grid x:Name="BoundingGrid" Opacity="0" Margin="-5">
+                                            <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}" Grid.Column="1" Grid.Row="2" Height="6" Width="12" VerticalAlignment="Top" Cursor="ScrollN"/>
+                                            <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="6" Width="12" VerticalAlignment="Bottom" Cursor="ScrollS"/>
+                                            <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="12" Width="6" VerticalAlignment="Center" HorizontalAlignment="Left" Cursor="ScrollW"/>
+                                            <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="12" Width="6" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="ScrollE"/>
+                                        </Grid>
                                     </Grid>
+                                    <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Trigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.3" Storyboard.TargetName="BoundingGrid"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </Trigger.EnterActions>
+                                            <Trigger.ExitActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"  To="0"   Duration="0:0:0.2" Storyboard.TargetName="BoundingGrid"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.ExitActions>
+                                    </Trigger>
+                                    </ControlTemplate.Triggers>
                                 </ControlTemplate>
+                                
                             </ContentControl.Template>
                             <Grid>
                                 <Grid.ColumnDefinitions>
