@@ -16,6 +16,7 @@
         xmlns:localHelpers="clr-namespace:JustSeat.Helpers"
         xmlns:wpfConverters="http://schemas.kent.boogaart.com/converters"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
+        xmlns:localResizing="clr-namespace:JustSeat.Resizing"
         >
     <Window.Resources>
         <ResourceDictionary>
@@ -201,54 +202,68 @@
                         </Style.Resources>
                         <Setter Property="Canvas.Left" Value="{Binding Path=X, Mode=TwoWay}" />
                         <Setter Property="Canvas.Top" Value="{Binding Path=Y, Mode=TwoWay}" />
-                        <Setter Property="Width" Value="{Binding Path=Width, Converter={localConvertes:ValueWithAdditionConverter AdditionValue={StaticResource tableSize}}}" />
-                        <Setter Property="Height" Value="{Binding Path=Length, Converter={localConvertes:ValueWithAdditionConverter AdditionValue={StaticResource tableSize}}}" />
-                        <Setter Property="localAttached:SupplementaryInteraction.Behaviors" Value="{StaticResource behaviors}"/> 
+                        <Setter Property="Width" Value="{Binding Path=Width, Converter={localConvertes:ValueWithAdditionConverter AdditionValue={StaticResource tableSize}}, Mode=TwoWay}" />
+                        <Setter Property="Height" Value="{Binding Path=Length, Converter={localConvertes:ValueWithAdditionConverter AdditionValue={StaticResource tableSize}}, Mode=TwoWay}" />
+                        <Setter Property="localAttached:SupplementaryInteraction.Behaviors" Value="{StaticResource behaviors}"/>
                     </Style>
                 </ItemsControl.ItemContainerStyle>
                 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="{Binding Width}"/>
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition Height="{Binding Length}"/>
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <ItemsControl ItemsSource="{Binding TopChairs}" Grid.Column="1" Style="{StaticResource chairItemsControlStyle}" />
-                            <ItemsControl ItemsSource="{Binding LeftChairs}" Grid.Row="1" Style="{StaticResource verticalChairItemsControlStyle}" />
-                            <ItemsControl ItemsSource="{Binding BottomChairs}" Grid.Row="2" Grid.Column="1" Style="{StaticResource chairItemsControlStyle}" />
-                            <ItemsControl ItemsSource="{Binding RightChairs}" Grid.Row="1" Grid.Column="2" Style="{StaticResource verticalChairItemsControlStyle}" />
-                            <Border Margin="2" Background="Green" Grid.Column="1" Grid.Row="1" >
-                                <Border.ContextMenu>
-                                    <ContextMenu>
-                                        <ContextMenu.Items>
-                                            <MenuItem Header="Remove table" Command="{Binding Data.RemoveTableCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding }" />
-                                        </ContextMenu.Items>
-                                    </ContextMenu>
-                                </Border.ContextMenu>
-                                <DockPanel>
-                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center">
-                                        <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddTopChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Center">
-                                        <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddBottomChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Vertical" DockPanel.Dock="Left" VerticalAlignment="Center">
-                                        <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddLeftChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Vertical" DockPanel.Dock="Right" VerticalAlignment="Center">
-                                        <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddRightChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
-                                    </StackPanel>
-                                    <Grid></Grid>
-                                </DockPanel>
-                            </Border>
-                        </Grid>
+                        <ContentControl>
+                            <ContentControl.Template>
+                                <ControlTemplate>
+                                    <Grid>
+                                        <ContentPresenter x:Name="Presenter" Content="{TemplateBinding ContentControl.Content}"
+                              Margin="{TemplateBinding Padding}"/>
+                                        <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}" Grid.Column="1" Grid.Row="2" Height="6" Width="12" VerticalAlignment="Top"/>
+                                        <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="6" Width="12" VerticalAlignment="Bottom"/>
+                                        <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="12" Width="6" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                                        <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="12" Width="6" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </ControlTemplate>
+                            </ContentControl.Template>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="{Binding Width, Mode=OneWay}"/>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition Height="{Binding Length, Mode=OneWay}"/>
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <ItemsControl ItemsSource="{Binding TopChairs}" Grid.Column="1" Style="{StaticResource chairItemsControlStyle}" />
+                                <ItemsControl ItemsSource="{Binding LeftChairs}" Grid.Row="1" Style="{StaticResource verticalChairItemsControlStyle}" />
+                                <ItemsControl ItemsSource="{Binding BottomChairs}" Grid.Row="2" Grid.Column="1" Style="{StaticResource chairItemsControlStyle}" />
+                                <ItemsControl ItemsSource="{Binding RightChairs}" Grid.Row="1" Grid.Column="2" Style="{StaticResource verticalChairItemsControlStyle}" />
+                                <Border Margin="2" Background="Green" Grid.Column="1" Grid.Row="1" >
+                                    <Border.ContextMenu>
+                                        <ContextMenu>
+                                            <ContextMenu.Items>
+                                                <MenuItem Header="Remove table" Command="{Binding Data.RemoveTableCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding }" />
+                                            </ContextMenu.Items>
+                                        </ContextMenu>
+                                    </Border.ContextMenu>
+                                    <DockPanel>
+                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center">
+                                            <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddTopChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+                                            <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddBottomChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Vertical" DockPanel.Dock="Left" VerticalAlignment="Center">
+                                            <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddLeftChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Vertical" DockPanel.Dock="Right" VerticalAlignment="Center">
+                                            <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddRightChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                        <Grid></Grid>
+                                    </DockPanel>
+                                </Border>
+                            </Grid>
+                        </ContentControl>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

@@ -35,7 +35,7 @@ namespace JustSeat.ViewModel
             //if (IsInDesignMode)
             {
 
-                Enumerable.Range(0, 5).ToList().ForEach(i =>
+                Enumerable.Range(0, 1).ToList().ForEach(i =>
                  {
 
                      Guests.Add(new Guest() { Name = "Guest " + (i + 1) });

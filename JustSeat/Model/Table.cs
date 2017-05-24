@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -17,8 +18,13 @@ namespace JustSeat.Model
         BrideFamily
     }
 
-    public class Table: ICanvasDisplayItem
+    public class Table: ViewModelBase, ICanvasDisplayItem
     {
+        private double _length;
+        private double _width;
+        private double _x;
+        private double _y;
+
         public Table()
         {
             Enumerable.Range(0, 2)
@@ -31,11 +37,58 @@ namespace JustSeat.Model
                 });
         }
 
-        public double Length { get; set; }
-        public double Width { get; set; }
+        public double Length
+        {
+            get { return _length; }
+            set
+            {
+                if (value != _length)
+                {
+                    _length = value;
+                    RaisePropertyChanged(() => Length);
+                }
+                        
+            }
+        }
 
-        public double X { get; set; }
-        public double Y { get; set; }
+        public double Width
+        {
+            get { return _width; }
+            set
+            {
+                if (value != _width)
+                {
+                    _width = value;
+                    RaisePropertyChanged(() => Width);
+                }
+            }
+        }
+
+        public double X
+        {
+            get { return _x; }
+            set
+            {
+                if (value != _x)
+                {
+                    _x = value;
+                    RaisePropertyChanged(() => X);
+                }
+            }
+        }
+
+        public double Y
+        {
+            get { return _y; }
+            set
+            {
+                if (value != _y)
+                {
+                    _y = value;
+                    RaisePropertyChanged(() => Y);
+                }
+            }
+        }
 
         public ObservableCollection<Chair> TopChairs { get; set; } = new ObservableCollection<Chair>();
         public ObservableCollection<Chair> BottomChairs { get; set; } = new ObservableCollection<Chair>();

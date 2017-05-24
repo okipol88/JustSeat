@@ -90,6 +90,9 @@
     <Compile Include="Model\Guest.cs" />
     <Compile Include="Model\Table.cs" />
     <Compile Include="Parameters\ChairRemovalParameter.cs" />
+    <Compile Include="Resizing\ResizeThumb.cs" />
+    <Compile Include="Resizing\SizeAdorner.cs" />
+    <Compile Include="Resizing\SizeChrome.cs" />
     <Compile Include="ViewModel\Handlers\GuestToSeatDropHandler.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
