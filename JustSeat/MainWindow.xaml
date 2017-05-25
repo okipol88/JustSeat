@@ -17,6 +17,8 @@
         xmlns:wpfConverters="http://schemas.kent.boogaart.com/converters"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         xmlns:localResizing="clr-namespace:JustSeat.Resizing"
+        xmlns:localCommands="clr-namespace:JustSeat.Commands"
+        xmlns:mvvm="clr-namespace:GalaSoft.MvvmLight.Ioc;assembly=GalaSoft.MvvmLight.Extras"
         >
     <Window.Resources>
         <ResourceDictionary>
@@ -161,6 +163,11 @@
             </Style>
         </ResourceDictionary>
     </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="MouseWheel">
+            <localCommands:EventCommandExecuter Command="{Binding Path=MouseScrollCommand}" EventArgsConverter="{localConvertes:MouseWheelEventArgsToMouseWheelInfoConverter}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" MinWidth="100"/>
@@ -186,10 +193,11 @@
             <ItemsControl ItemsSource="{Binding Items}"  >
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas Background="Red"  />
+                            <Canvas Background="Red"  >
+                            </Canvas>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                
+
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
                         <Style.Resources>
@@ -209,7 +217,11 @@
                 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <ContentControl>
+                        <ContentControl RenderTransformOrigin="0.5,0.5">
+                            <ContentControl.RenderTransform>
+                                <ScaleTransform  ScaleX="{Binding Data.ZoomLevel, Source={StaticResource bindingProxy}}" ScaleY="{Binding Data.ZoomLevel, Source={StaticResource bindingProxy}}"  />
+                            </ContentControl.RenderTransform>
+
                             <ContentControl.Template>
                                 <ControlTemplate>
                                     <Grid>

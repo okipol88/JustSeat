@@ -8,6 +8,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using System;
+using JustSeat.Commands;
+using JustSeat.Commands.Model;
 
 namespace JustSeat.ViewModel
 {
@@ -26,6 +28,8 @@ namespace JustSeat.ViewModel
     public class MainViewModel : ViewModelBase
     {
         int side = 80;
+        private double _zoomLevel = 1;
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -36,15 +40,39 @@ namespace JustSeat.ViewModel
             {
 
                 Enumerable.Range(0, 1).ToList().ForEach(i =>
-                 {
+                {
 
-                     Guests.Add(new Guest() { Name = "Guest " + (i + 1) });
-                     Items.Add(new Table() { X = i * posMultiplier, Y = i * posMultiplier, Width = side, Length = side });
-                 });
+                    Guests.Add(new Guest() { Name = "Guest " + (i + 1) });
+                    Items.Add(new Table() { X = i * posMultiplier, Y = i * posMultiplier, Width = side, Length = side });
+                });
 
                 ((Table)Items[0]).TopChairs[0].Person = Guests.First();
             }
 
+            AddItemHandlingAction();
+
+            AddDropHandler();
+
+            AddMouseWheelZoomHandling();
+        }
+
+        private void AddMouseWheelZoomHandling()
+        {
+            MouseScrollCommand = new RelayCommand<MouseWheelInfo>((mouseInfo) =>
+            {
+                if (mouseInfo.Delta > 0)
+                    ZoomLevel++;
+                else if (mouseInfo.Delta < 0)
+                {
+                    if (ZoomLevel <= 1)
+                        ZoomLevel -= 0.1;
+                    else ZoomLevel -= 1;
+                }
+            });
+        }
+
+        private void AddItemHandlingAction()
+        {
             RemoveGuestCommand = new RelayCommand<Chair>(
             (c) =>
             {
@@ -100,7 +128,10 @@ namespace JustSeat.ViewModel
 
                 Items.Remove(table);
             });
+        }
 
+        private void AddDropHandler()
+        {
             var dropHandler = new GuestToSeatDropHandler();
             dropHandler.GuestDropped += (o, e) =>
             {
@@ -130,5 +161,20 @@ namespace JustSeat.ViewModel
         public RelayCommand<ChairRemovalParameter> RemovePersonOrChairCommand { get; private set; }
         public RelayCommand AddTableCommand { get; private set; }
         public RelayCommand<Table> RemoveTableCommand { get; private set; }
+
+        public ICommand MouseScrollCommand { get; private set; }
+
+        public double ZoomLevel
+        {
+            get => _zoomLevel; 
+            set
+            {
+                if (_zoomLevel != value)
+                {
+                    _zoomLevel = value;
+                    RaisePropertyChanged(() => ZoomLevel);
+                }
+            }
+        }
     }
 }
