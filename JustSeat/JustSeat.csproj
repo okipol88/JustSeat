@@ -87,6 +87,7 @@
     <Compile Include="Commands\EventCommandExecuter.cs" />
     <Compile Include="Converter\ChairWithinSetMultiValueConverter.cs" />
     <Compile Include="Converter\MouseWheelEventArgsToMouseWheelInfoConverter.cs" />
+    <Compile Include="Converter\ToggleBooleanValueConverter.cs" />
     <Compile Include="Converter\ValueWithAdditionConverter.cs" />
     <Compile Include="Helpers\BindingProxy.cs" />
     <Compile Include="Model\Chair.cs" />

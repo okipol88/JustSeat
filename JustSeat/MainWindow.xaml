@@ -173,10 +173,7 @@
             <ColumnDefinition Width="*" MinWidth="100"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
-
         <DockPanel>
-
-            <Button DockPanel.Dock="Bottom">Add</Button>
             <ListView ItemsSource="{Binding Guests}" dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True">
                 <ListView.View>
                     <GridView>
@@ -185,10 +182,7 @@
                 </ListView.View>
             </ListView>
         </DockPanel>
-        <DockPanel Grid.Column="2">
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="Blue" MinHeight="44" >
-                <Button Command="{Binding AddTableCommand}">Add Table</Button>
-            </StackPanel>
+        <Grid Grid.Column="2">
 
             <ItemsControl ItemsSource="{Binding Items}"  >
                 <ItemsControl.ItemsPanel>
@@ -299,6 +293,84 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-        </DockPanel>
+
+            <DockPanel>
+                <DockPanel.Resources>
+                    <ResourceDictionary>
+                        <Thickness x:Key="VisibleMargin" ></Thickness>
+                        <Thickness x:Key="HiddenMargin">0,0,-150,0</Thickness>
+                    </ResourceDictionary>
+                </DockPanel.Resources>
+
+                <Button DockPanel.Dock="Top" Command="{Binding AddTableCommand}" HorizontalAlignment="Right" VerticalAlignment="Top" Height="44">Add Table</Button>
+
+                <StackPanel Orientation="Horizontal" Panel.ZIndex="2" HorizontalAlignment="Right" Margin="{StaticResource HiddenMargin}">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsChecked, ElementName=sidePanelProxyCheckbox}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <Storyboard>
+                                                    <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
+                                                        <SplineThicknessKeyFrame KeyTime="00:00:00" Value="{StaticResource HiddenMargin}" />
+                                                        <SplineThicknessKeyFrame KeyTime="00:00:00.2" Value="{StaticResource VisibleMargin}" />
+                                                    </ThicknessAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
+                                                    <SplineThicknessKeyFrame KeyTime="00:00:00" Value="{StaticResource VisibleMargin}" />
+                                                    <SplineThicknessKeyFrame KeyTime="00:00:00.2" Value="{StaticResource HiddenMargin}" />
+                                                </ThicknessAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <CheckBox Visibility="Collapsed" x:Name="sidePanelProxyCheckbox" />
+                    <Grid DockPanel.Dock="Bottom"  VerticalAlignment="Bottom"  DataContext="{Binding Source={StaticResource bindingProxy}}">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Opacity" Value="0.4" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=sidePanelProxyCheckbox}" Value="True" >
+                                        <Setter Property="Opacity" Value="1" />
+                                    </DataTrigger>
+                                    <Trigger Property="IsMouseOver" Value="True" >
+                                        <Setter Property="Opacity" Value="1" />
+                                    </Trigger>
+                                </Style.Triggers>
+                                
+                            </Style>
+                        </Grid.Style>
+                        <Button   Content="+">
+                            <Button.Triggers>
+                                <EventTrigger RoutedEvent="Button.Click">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetName="sidePanelProxyCheckbox" Storyboard.TargetProperty="IsChecked">
+                                                <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="{Binding IsChecked, ElementName=sidePanelProxyCheckbox, Converter={localConvertes:ToggleBooleanValueConverter}}"/>
+                                            </BooleanAnimationUsingKeyFrames>
+
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Button.Triggers>
+                        </Button>
+                    </Grid>
+                    <Border BorderBrush="#AF1719"  BorderThickness="1" Width="150" Background="#4C808080" >
+
+                    </Border>
+                </StackPanel>
+            </DockPanel>
+        </Grid>
     </Grid>
 </Window>
