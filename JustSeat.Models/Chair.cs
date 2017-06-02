@@ -1,5 +1,4 @@
 ﻿using System;
-using GongSolutions.Wpf.DragDrop;
 using GalaSoft.MvvmLight;
 using System.Windows;
 

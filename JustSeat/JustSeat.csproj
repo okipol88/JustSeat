@@ -90,9 +90,7 @@
     <Compile Include="Converter\ToggleBooleanValueConverter.cs" />
     <Compile Include="Converter\ValueWithAdditionConverter.cs" />
     <Compile Include="Helpers\BindingProxy.cs" />
-    <Compile Include="Model\Chair.cs" />
-    <Compile Include="Model\Guest.cs" />
-    <Compile Include="Model\Table.cs" />
+    <Compile Include="ImportExport\ImportExport.cs" />
     <Compile Include="Parameters\ChairRemovalParameter.cs" />
     <Compile Include="Resizing\ResizeThumb.cs" />
     <Compile Include="Resizing\SizeAdorner.cs" />
@@ -148,6 +146,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\addPerson.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JustSeat.Models\JustSeat.Models.csproj">
+      <Project>{3abfb0a1-4d28-444a-921e-28686da18cd6}</Project>
+      <Name>JustSeat.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
