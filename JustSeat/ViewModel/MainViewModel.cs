@@ -29,6 +29,7 @@ namespace JustSeat.ViewModel
     {
         int side = 80;
         private double _zoomLevel = 1;
+        private Guest _newGuest;
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -36,7 +37,7 @@ namespace JustSeat.ViewModel
         public MainViewModel()
         {
             var posMultiplier = 90;
-            //if (IsInDesignMode)
+            if (IsInDesignMode)
             {
 
                 Enumerable.Range(0, 1).ToList().ForEach(i =>
@@ -128,6 +129,33 @@ namespace JustSeat.ViewModel
 
                 Items.Remove(table);
             });
+
+            CreateNewGuestScaffold();
+            AddNewGuestCommand = new RelayCommand<Guest>(g =>
+            {
+                Guests.Add(g);
+                g.PropertyChanged -= _newGuest_PropertyChanged;
+
+                CreateNewGuestScaffold();
+                AddNewGuestCommand.RaiseCanExecuteChanged();
+            }, 
+            g => 
+            {
+                return g != null && !string.IsNullOrWhiteSpace(g.Name) && !string.IsNullOrWhiteSpace(g.Surname);
+            });
+        }
+
+        private void CreateNewGuestScaffold()
+        {
+
+            _newGuest = new Guest();
+            _newGuest.PropertyChanged += _newGuest_PropertyChanged;
+            RaisePropertyChanged(() => NewGuest);
+        }
+
+        private void _newGuest_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            AddNewGuestCommand.RaiseCanExecuteChanged();
         }
 
         private void AddDropHandler()
@@ -146,6 +174,14 @@ namespace JustSeat.ViewModel
             Items.Add(new Table() { Width = side, Length = side });
         }
 
+        public Guest NewGuest
+        {
+           get
+            {
+                return _newGuest;
+            }
+        }
+
         public ObservableCollection<Guest> Guests { get; } = new ObservableCollection<Guest>();
         public ObservableCollection<ICanvasDisplayItem> Items { get; } = new ObservableCollection<ICanvasDisplayItem>();
 
@@ -161,6 +197,7 @@ namespace JustSeat.ViewModel
         public RelayCommand<ChairRemovalParameter> RemovePersonOrChairCommand { get; private set; }
         public RelayCommand AddTableCommand { get; private set; }
         public RelayCommand<Table> RemoveTableCommand { get; private set; }
+        public RelayCommand<Guest> AddNewGuestCommand { get; private set; }
 
         public ICommand MouseScrollCommand { get; private set; }
 

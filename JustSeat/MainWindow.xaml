@@ -304,7 +304,7 @@
 
                 <Button DockPanel.Dock="Top" Command="{Binding AddTableCommand}" HorizontalAlignment="Right" VerticalAlignment="Top" Height="44">Add Table</Button>
 
-                <StackPanel Orientation="Horizontal" Panel.ZIndex="2" HorizontalAlignment="Right" Margin="{StaticResource HiddenMargin}">
+                <StackPanel DockPanel.Dock="Bottom"  Orientation="Horizontal" Panel.ZIndex="2" HorizontalAlignment="Right" Margin="{StaticResource HiddenMargin}">
                     <StackPanel.Style>
                         <Style TargetType="StackPanel">
                             <Style.Triggers>
@@ -335,8 +335,10 @@
                             </Style.Triggers>
                         </Style>
                     </StackPanel.Style>
+                    
+                    <!-- Slide in Panel-->
                     <CheckBox Visibility="Collapsed" x:Name="sidePanelProxyCheckbox" />
-                    <Grid DockPanel.Dock="Bottom"  VerticalAlignment="Bottom"  DataContext="{Binding Source={StaticResource bindingProxy}}">
+                    <Grid  VerticalAlignment="Bottom"  DataContext="{Binding Source={StaticResource bindingProxy}}">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Opacity" Value="0.4" />
@@ -351,7 +353,12 @@
                                 
                             </Style>
                         </Grid.Style>
-                        <Button   Content="+">
+                        <Button Width="42" >
+                            <Button.Template>
+                                <ControlTemplate>
+                                  <Image Source="pack://application:,,,/Assets/addPerson.png" />
+                                </ControlTemplate>
+                            </Button.Template>
                             <Button.Triggers>
                                 <EventTrigger RoutedEvent="Button.Click">
                                     <BeginStoryboard>
@@ -366,10 +373,30 @@
                             </Button.Triggers>
                         </Button>
                     </Grid>
-                    <Border BorderBrush="#AF1719"  BorderThickness="1" Width="150" Background="#4C808080" >
+                    <Border BorderBrush="#AF1719"  BorderThickness="1" Width="150" Background="#4C808080">
+                        <StackPanel Margin="2">
+                            <Grid DataContext="{Binding NewGuest}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition  />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="AUto" />
+                                    <RowDefinition Height="AUto" />
+                                </Grid.RowDefinitions>
 
+                                <TextBlock Margin="2">Name</TextBlock>
+                                <TextBox Margin="2" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" />
+                                
+                                <TextBlock Grid.Row="1" Margin="2">Surname</TextBlock>
+                                <TextBox Grid.Row="1"  Margin="2" Text="{Binding Surname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" />
+                            </Grid>
+                            <Button Content="Add" Command="{Binding AddNewGuestCommand}" CommandParameter="{Binding NewGuest}"/>
+                        </StackPanel>
                     </Border>
                 </StackPanel>
+
+                <Grid></Grid>
             </DockPanel>
         </Grid>
     </Grid>
