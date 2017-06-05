@@ -166,11 +166,6 @@
             </Style>
         </ResourceDictionary>
     </Window.Resources>
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="MouseWheel">
-            <localCommands:EventCommandExecuter Command="{Binding Path=MouseScrollCommand}" EventArgsConverter="{localConvertes:MouseWheelEventArgsToMouseWheelInfoConverter}"/>
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
     <DockPanel>
         <Grid DockPanel.Dock="Top">
             <StackPanel Orientation="Horizontal">
@@ -193,7 +188,8 @@
                 <ListView ItemsSource="{Binding Guests}" dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn DisplayMemberBinding="{Binding Name}" />
+                            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
+                            <GridViewColumn Header="Surname" DisplayMemberBinding="{Binding Surname}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -320,6 +316,34 @@
                         </ResourceDictionary>
                     </DockPanel.Resources>
 
+                    <StackPanel DockPanel.Dock="Left" VerticalAlignment="Bottom">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Width" Value="24" />
+                                <Setter Property="Height" Value="24" />
+                                <Setter Property="Opacity" Value="0.4" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True" >
+                                        <Setter Property="Opacity" Value="1" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Resources>
+                        <Button Command="{Binding ZoomInCommand}">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Image Source="pack://application:,,,/Assets/ZoomIn.png" />
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button Command="{Binding ZoomOutCommand}">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Image Source="pack://application:,,,/Assets/ZoomOut.png" />
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
                     <Button DockPanel.Dock="Top" Command="{Binding AddTableCommand}" HorizontalAlignment="Right" VerticalAlignment="Top" Height="44">Add Table</Button>
 
                     <StackPanel DockPanel.Dock="Bottom"  Orientation="Horizontal" Panel.ZIndex="2" HorizontalAlignment="Right" Margin="{StaticResource HiddenMargin}">

@@ -61,7 +61,7 @@ namespace JustSeat.ViewModel
 
             AddDropHandler();
 
-            AddMouseWheelZoomHandling();
+            AddZoomHandling();
 
             AddProjectHandling();
         }
@@ -138,18 +138,17 @@ namespace JustSeat.ViewModel
             });
         }
 
-        private void AddMouseWheelZoomHandling()
+        private void AddZoomHandling()
         {
-            MouseScrollCommand = new RelayCommand<MouseWheelInfo>((mouseInfo) =>
+            ZoomInCommand = new RelayCommand(() =>
             {
-                if (mouseInfo.Delta > 0)
-                    ZoomLevel++;
-                else if (mouseInfo.Delta < 0)
-                {
-                    if (ZoomLevel <= 1)
-                        ZoomLevel -= 0.1;
-                    else ZoomLevel -= 1;
-                }
+                ZoomLevel++;
+            });
+            ZoomOutCommand = new RelayCommand(() => 
+            {
+                if (ZoomLevel <= 1)
+                    ZoomLevel -= 0.1;
+                else ZoomLevel -= 1;
             });
         }
 
@@ -283,7 +282,8 @@ namespace JustSeat.ViewModel
         public RelayCommand SaveProjectCommand { get; private set; }
         public RelayCommand LoadProjectCommand { get; private set; }
 
-        public ICommand MouseScrollCommand { get; private set; }
+        public ICommand ZoomInCommand { get; private set; }
+        public ICommand ZoomOutCommand { get; private set; }
 
         public double ZoomLevel
         {

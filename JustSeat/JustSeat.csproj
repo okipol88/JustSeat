@@ -165,5 +165,9 @@
       <Name>JustSeat.Serialization</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\ZoomIn.png" />
+    <Resource Include="Assets\ZoomOut.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
