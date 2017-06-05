@@ -19,6 +19,9 @@
         xmlns:localResizing="clr-namespace:JustSeat.Resizing"
         xmlns:localCommands="clr-namespace:JustSeat.Commands"
         xmlns:mvvm="clr-namespace:GalaSoft.MvvmLight.Ioc;assembly=GalaSoft.MvvmLight.Extras"
+        xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+        xmlns:localControls="clr-namespace:JustSeat.Controls"
+         md:DialogServiceViews.IsRegistered="True"
         >
     <Window.Resources>
         <ResourceDictionary>
@@ -168,236 +171,252 @@
             <localCommands:EventCommandExecuter Command="{Binding Path=MouseScrollCommand}" EventArgsConverter="{localConvertes:MouseWheelEventArgsToMouseWheelInfoConverter}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="100"/>
-            <ColumnDefinition Width="3*"/>
-        </Grid.ColumnDefinitions>
-        <DockPanel>
-            <ListView ItemsSource="{Binding Guests}" dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True">
-                <ListView.View>
-                    <GridView>
+    <DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <StackPanel Orientation="Horizontal">
+                <Menu IsMainMenu="True">
+                    <MenuItem Header="Project">
+                        <MenuItem Header="New" Command="{Binding NewProjectCommand}"/>
+                        <MenuItem Header="Save"  Command="{Binding SaveProjectCommand}"/>
+                        <MenuItem Header="Load" Command="{Binding LoadProjectCommand}"/>
+                    </MenuItem>
+                </Menu>
+            </StackPanel>
+        </Grid>
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="100"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <DockPanel>
+                <ListView ItemsSource="{Binding Guests}" dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True">
+                    <ListView.View>
+                        <GridView>
                             <GridViewColumn DisplayMemberBinding="{Binding Name}" />
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </DockPanel>
-        <Grid Grid.Column="2">
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </DockPanel>
+            <Grid Grid.Column="2">
 
-            <ItemsControl ItemsSource="{Binding Items}"  >
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                            <Canvas Background="Red"  >
-                            </Canvas>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 
-                <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="ContentPresenter">
-                        <Style.Resources>
-                            <ResourceDictionary>
-                                <localAttached:Behaviors x:Key="behaviors" x:Shared="False">
-                                    <localBehaviors:DragBehavior />
-                                </localAttached:Behaviors>
-                            </ResourceDictionary>
-                        </Style.Resources>
-                        <Setter Property="Canvas.Left" Value="{Binding Path=X, Mode=TwoWay}" />
-                        <Setter Property="Canvas.Top" Value="{Binding Path=Y, Mode=TwoWay}" />
-                        <Setter Property="Width" Value="{Binding Path=Width, Converter={localConvertes:ValueWithAdditionConverter AdditionValue={StaticResource tableSize}}, Mode=TwoWay}" />
-                        <Setter Property="Height" Value="{Binding Path=Length, Converter={localConvertes:ValueWithAdditionConverter AdditionValue={StaticResource tableSize}}, Mode=TwoWay}" />
-                        <Setter Property="localAttached:SupplementaryInteraction.Behaviors" Value="{StaticResource behaviors}"/>
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
-                
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ContentControl RenderTransformOrigin="0.5,0.5">
-                            <ContentControl.RenderTransform>
-                                <ScaleTransform  ScaleX="{Binding Data.ZoomLevel, Source={StaticResource bindingProxy}}" ScaleY="{Binding Data.ZoomLevel, Source={StaticResource bindingProxy}}"  />
-                            </ContentControl.RenderTransform>
+                    <ItemsControl ItemsSource="{Binding Items}"  >
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <localControls:AutoResizeCanvas Background="Red" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
 
-                            <ContentControl.Template>
-                                <ControlTemplate>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Style.Resources>
+                                    <ResourceDictionary>
+                                        <localAttached:Behaviors x:Key="behaviors" x:Shared="False">
+                                            <localBehaviors:DragBehavior />
+                                        </localAttached:Behaviors>
+                                    </ResourceDictionary>
+                                </Style.Resources>
+                                <Setter Property="Canvas.Left" Value="{Binding Path=X, Mode=TwoWay}" />
+                                <Setter Property="Canvas.Top" Value="{Binding Path=Y, Mode=TwoWay}" />
+                                <Setter Property="Width" Value="{Binding Path=Width, Converter={localConvertes:ValueWithAdditionConverter AdditionValue={StaticResource tableSize}}, Mode=TwoWay}" />
+                                <Setter Property="Height" Value="{Binding Path=Length, Converter={localConvertes:ValueWithAdditionConverter AdditionValue={StaticResource tableSize}}, Mode=TwoWay}" />
+                                <Setter Property="localAttached:SupplementaryInteraction.Behaviors" Value="{StaticResource behaviors}"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl RenderTransformOrigin="0.5,0.5">
+                                    <ContentControl.RenderTransform>
+                                        <ScaleTransform  ScaleX="{Binding Data.ZoomLevel, Source={StaticResource bindingProxy}}" ScaleY="{Binding Data.ZoomLevel, Source={StaticResource bindingProxy}}"  />
+                                    </ContentControl.RenderTransform>
+
+                                    <ContentControl.Template>
+                                        <ControlTemplate>
+                                            <Grid>
+                                                <ContentPresenter x:Name="Presenter" Content="{TemplateBinding ContentControl.Content}" Margin="{TemplateBinding Padding}"/>
+
+                                                <Grid x:Name="BoundingGrid" Opacity="0" Margin="-5">
+                                                    <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}" Grid.Column="1" Grid.Row="2" Height="6" Width="12" VerticalAlignment="Top" Cursor="ScrollN"/>
+                                                    <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="6" Width="12" VerticalAlignment="Bottom" Cursor="ScrollS"/>
+                                                    <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="12" Width="6" VerticalAlignment="Center" HorizontalAlignment="Left" Cursor="ScrollW"/>
+                                                    <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="12" Width="6" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="ScrollE"/>
+                                                </Grid>
+                                            </Grid>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Trigger.EnterActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.3" Storyboard.TargetName="BoundingGrid"/>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </Trigger.EnterActions>
+                                                    <Trigger.ExitActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"  To="0"   Duration="0:0:0.2" Storyboard.TargetName="BoundingGrid"/>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </Trigger.ExitActions>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+
+                                    </ContentControl.Template>
                                     <Grid>
-                                        <ContentPresenter x:Name="Presenter" Content="{TemplateBinding ContentControl.Content}" Margin="{TemplateBinding Padding}"/>
-                                        
-                                        <Grid x:Name="BoundingGrid" Opacity="0" Margin="-5">
-                                            <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}" Grid.Column="1" Grid.Row="2" Height="6" Width="12" VerticalAlignment="Top" Cursor="ScrollN"/>
-                                            <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="6" Width="12" VerticalAlignment="Bottom" Cursor="ScrollS"/>
-                                            <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="12" Width="6" VerticalAlignment="Center" HorizontalAlignment="Left" Cursor="ScrollW"/>
-                                            <localResizing:ResizeThumb DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"  Grid.Column="1" Grid.Row="2" Height="12" Width="6" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="ScrollE"/>
-                                        </Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="{Binding Width, Mode=OneWay}"/>
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition Height="{Binding Length, Mode=OneWay}"/>
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <ItemsControl ItemsSource="{Binding TopChairs}" Grid.Column="1" Style="{StaticResource chairItemsControlStyle}" />
+                                        <ItemsControl ItemsSource="{Binding LeftChairs}" Grid.Row="1" Style="{StaticResource verticalChairItemsControlStyle}" />
+                                        <ItemsControl ItemsSource="{Binding BottomChairs}" Grid.Row="2" Grid.Column="1" Style="{StaticResource chairItemsControlStyle}" />
+                                        <ItemsControl ItemsSource="{Binding RightChairs}" Grid.Row="1" Grid.Column="2" Style="{StaticResource verticalChairItemsControlStyle}" />
+                                        <Border Margin="2" Background="Green" Grid.Column="1" Grid.Row="1" >
+                                            <Border.ContextMenu>
+                                                <ContextMenu>
+                                                    <ContextMenu.Items>
+                                                        <MenuItem Header="Remove table" Command="{Binding Data.RemoveTableCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding }" />
+                                                    </ContextMenu.Items>
+                                                </ContextMenu>
+                                            </Border.ContextMenu>
+                                            <DockPanel>
+                                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center">
+                                                    <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddTopChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+                                                    <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddBottomChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
+                                                </StackPanel>
+                                                <StackPanel Orientation="Vertical" DockPanel.Dock="Left" VerticalAlignment="Center">
+                                                    <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddLeftChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
+                                                </StackPanel>
+                                                <StackPanel Orientation="Vertical" DockPanel.Dock="Right" VerticalAlignment="Center">
+                                                    <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddRightChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
+                                                </StackPanel>
+                                                <Grid></Grid>
+                                            </DockPanel>
+                                        </Border>
                                     </Grid>
-                                    <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Trigger.EnterActions>
+                                </ContentControl>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <DockPanel>
+                    <DockPanel.Resources>
+                        <ResourceDictionary>
+                            <Thickness x:Key="VisibleMargin" ></Thickness>
+                            <Thickness x:Key="HiddenMargin">0,0,-150,0</Thickness>
+                        </ResourceDictionary>
+                    </DockPanel.Resources>
+
+                    <Button DockPanel.Dock="Top" Command="{Binding AddTableCommand}" HorizontalAlignment="Right" VerticalAlignment="Top" Height="44">Add Table</Button>
+
+                    <StackPanel DockPanel.Dock="Bottom"  Orientation="Horizontal" Panel.ZIndex="2" HorizontalAlignment="Right" Margin="{StaticResource HiddenMargin}">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=sidePanelProxyCheckbox}" Value="True">
+                                        <DataTrigger.EnterActions>
                                             <BeginStoryboard>
                                                 <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.3" Storyboard.TargetName="BoundingGrid"/>
+                                                    <Storyboard>
+                                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
+                                                            <SplineThicknessKeyFrame KeyTime="00:00:00" Value="{StaticResource HiddenMargin}" />
+                                                            <SplineThicknessKeyFrame KeyTime="00:00:00.2" Value="{StaticResource VisibleMargin}" />
+                                                        </ThicknessAnimationUsingKeyFrames>
+                                                    </Storyboard>
                                                 </Storyboard>
                                             </BeginStoryboard>
-                                        </Trigger.EnterActions>
-                                            <Trigger.ExitActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"  To="0"   Duration="0:0:0.2" Storyboard.TargetName="BoundingGrid"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </Trigger.ExitActions>
-                                    </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                                
-                            </ContentControl.Template>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="{Binding Width, Mode=OneWay}"/>
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition />
-                                    <RowDefinition Height="{Binding Length, Mode=OneWay}"/>
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-                                <ItemsControl ItemsSource="{Binding TopChairs}" Grid.Column="1" Style="{StaticResource chairItemsControlStyle}" />
-                                <ItemsControl ItemsSource="{Binding LeftChairs}" Grid.Row="1" Style="{StaticResource verticalChairItemsControlStyle}" />
-                                <ItemsControl ItemsSource="{Binding BottomChairs}" Grid.Row="2" Grid.Column="1" Style="{StaticResource chairItemsControlStyle}" />
-                                <ItemsControl ItemsSource="{Binding RightChairs}" Grid.Row="1" Grid.Column="2" Style="{StaticResource verticalChairItemsControlStyle}" />
-                                <Border Margin="2" Background="Green" Grid.Column="1" Grid.Row="1" >
-                                    <Border.ContextMenu>
-                                        <ContextMenu>
-                                            <ContextMenu.Items>
-                                                <MenuItem Header="Remove table" Command="{Binding Data.RemoveTableCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding }" />
-                                            </ContextMenu.Items>
-                                        </ContextMenu>
-                                    </Border.ContextMenu>
-                                    <DockPanel>
-                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center">
-                                            <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddTopChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Center">
-                                            <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddBottomChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Vertical" DockPanel.Dock="Left" VerticalAlignment="Center">
-                                            <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddLeftChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Vertical" DockPanel.Dock="Right" VerticalAlignment="Center">
-                                            <Button Style="{StaticResource plusButtonStyle}" Command="{Binding Data.AddRightChairCommand, Source={StaticResource bindingProxy}}" CommandParameter="{Binding}"/>
-                                        </StackPanel>
-                                        <Grid></Grid>
-                                    </DockPanel>
-                                </Border>
-                            </Grid>
-                        </ContentControl>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <DockPanel>
-                <DockPanel.Resources>
-                    <ResourceDictionary>
-                        <Thickness x:Key="VisibleMargin" ></Thickness>
-                        <Thickness x:Key="HiddenMargin">0,0,-150,0</Thickness>
-                    </ResourceDictionary>
-                </DockPanel.Resources>
-
-                <Button DockPanel.Dock="Top" Command="{Binding AddTableCommand}" HorizontalAlignment="Right" VerticalAlignment="Top" Height="44">Add Table</Button>
-
-                <StackPanel DockPanel.Dock="Bottom"  Orientation="Horizontal" Panel.ZIndex="2" HorizontalAlignment="Right" Margin="{StaticResource HiddenMargin}">
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsChecked, ElementName=sidePanelProxyCheckbox}" Value="True">
-                                    <DataTrigger.EnterActions>
-                                        <BeginStoryboard>
-                                            <Storyboard>
+                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <BeginStoryboard>
                                                 <Storyboard>
                                                     <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
-                                                        <SplineThicknessKeyFrame KeyTime="00:00:00" Value="{StaticResource HiddenMargin}" />
-                                                        <SplineThicknessKeyFrame KeyTime="00:00:00.2" Value="{StaticResource VisibleMargin}" />
+                                                        <SplineThicknessKeyFrame KeyTime="00:00:00" Value="{StaticResource VisibleMargin}" />
+                                                        <SplineThicknessKeyFrame KeyTime="00:00:00.2" Value="{StaticResource HiddenMargin}" />
                                                     </ThicknessAnimationUsingKeyFrames>
                                                 </Storyboard>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </DataTrigger.EnterActions>
-                                    <DataTrigger.ExitActions>
+                                            </BeginStoryboard>
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+
+                        <!-- Slide in Panel-->
+                        <CheckBox Visibility="Collapsed" x:Name="sidePanelProxyCheckbox" />
+                        <Grid  VerticalAlignment="Bottom"  DataContext="{Binding Source={StaticResource bindingProxy}}">
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Opacity" Value="0.4" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, ElementName=sidePanelProxyCheckbox}" Value="True" >
+                                            <Setter Property="Opacity" Value="1" />
+                                        </DataTrigger>
+                                        <Trigger Property="IsMouseOver" Value="True" >
+                                            <Setter Property="Opacity" Value="1" />
+                                        </Trigger>
+                                    </Style.Triggers>
+
+                                </Style>
+                            </Grid.Style>
+                            <Button Width="42" >
+                                <Button.Template>
+                                    <ControlTemplate>
+                                        <Image Source="pack://application:,,,/Assets/addPerson.png" />
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <Button.Triggers>
+                                    <EventTrigger RoutedEvent="Button.Click">
                                         <BeginStoryboard>
                                             <Storyboard>
-                                                <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
-                                                    <SplineThicknessKeyFrame KeyTime="00:00:00" Value="{StaticResource VisibleMargin}" />
-                                                    <SplineThicknessKeyFrame KeyTime="00:00:00.2" Value="{StaticResource HiddenMargin}" />
-                                                </ThicknessAnimationUsingKeyFrames>
+                                                <BooleanAnimationUsingKeyFrames Storyboard.TargetName="sidePanelProxyCheckbox" Storyboard.TargetProperty="IsChecked">
+                                                    <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="{Binding IsChecked, ElementName=sidePanelProxyCheckbox, Converter={localConvertes:ToggleBooleanValueConverter}}"/>
+                                                </BooleanAnimationUsingKeyFrames>
+
                                             </Storyboard>
                                         </BeginStoryboard>
-                                    </DataTrigger.ExitActions>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
-                    
-                    <!-- Slide in Panel-->
-                    <CheckBox Visibility="Collapsed" x:Name="sidePanelProxyCheckbox" />
-                    <Grid  VerticalAlignment="Bottom"  DataContext="{Binding Source={StaticResource bindingProxy}}">
-                        <Grid.Style>
-                            <Style TargetType="Grid">
-                                <Setter Property="Opacity" Value="0.4" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsChecked, ElementName=sidePanelProxyCheckbox}" Value="True" >
-                                        <Setter Property="Opacity" Value="1" />
-                                    </DataTrigger>
-                                    <Trigger Property="IsMouseOver" Value="True" >
-                                        <Setter Property="Opacity" Value="1" />
-                                    </Trigger>
-                                </Style.Triggers>
-                                
-                            </Style>
-                        </Grid.Style>
-                        <Button Width="42" >
-                            <Button.Template>
-                                <ControlTemplate>
-                                  <Image Source="pack://application:,,,/Assets/addPerson.png" />
-                                </ControlTemplate>
-                            </Button.Template>
-                            <Button.Triggers>
-                                <EventTrigger RoutedEvent="Button.Click">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetName="sidePanelProxyCheckbox" Storyboard.TargetProperty="IsChecked">
-                                                <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="{Binding IsChecked, ElementName=sidePanelProxyCheckbox, Converter={localConvertes:ToggleBooleanValueConverter}}"/>
-                                            </BooleanAnimationUsingKeyFrames>
+                                    </EventTrigger>
+                                </Button.Triggers>
+                            </Button>
+                        </Grid>
+                        <Border BorderBrush="#AF1719"  BorderThickness="1" Width="150" Background="#4C808080">
+                            <StackPanel Margin="2">
+                                <Grid DataContext="{Binding NewGuest}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition  />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="AUto" />
+                                        <RowDefinition Height="AUto" />
+                                    </Grid.RowDefinitions>
 
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                            </Button.Triggers>
-                        </Button>
-                    </Grid>
-                    <Border BorderBrush="#AF1719"  BorderThickness="1" Width="150" Background="#4C808080">
-                        <StackPanel Margin="2">
-                            <Grid DataContext="{Binding NewGuest}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition  />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="AUto" />
-                                    <RowDefinition Height="AUto" />
-                                </Grid.RowDefinitions>
+                                    <TextBlock Margin="2">Name</TextBlock>
+                                    <TextBox Margin="2" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" />
 
-                                <TextBlock Margin="2">Name</TextBlock>
-                                <TextBox Margin="2" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" />
-                                
-                                <TextBlock Grid.Row="1" Margin="2">Surname</TextBlock>
-                                <TextBox Grid.Row="1"  Margin="2" Text="{Binding Surname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" />
-                            </Grid>
-                            <Button Content="Add" Command="{Binding AddNewGuestCommand}" CommandParameter="{Binding NewGuest}"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
+                                    <TextBlock Grid.Row="1" Margin="2">Surname</TextBlock>
+                                    <TextBox Grid.Row="1"  Margin="2" Text="{Binding Surname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" />
+                                </Grid>
+                                <Button Content="Add" Command="{Binding AddNewGuestCommand}" CommandParameter="{Binding NewGuest}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
 
-                <Grid></Grid>
-            </DockPanel>
+                    <Grid></Grid>
+                </DockPanel>
+            </Grid>
         </Grid>
-    </Grid>
+    </DockPanel>
 </Window>

@@ -10,6 +10,10 @@ using System.Windows.Input;
 using System;
 using JustSeat.Commands;
 using JustSeat.Commands.Model;
+using MvvmDialogs;
+using System.IO;
+using MvvmDialogs.FrameworkDialogs.OpenFile;
+using MvvmDialogs.FrameworkDialogs.SaveFile;
 
 namespace JustSeat.ViewModel
 {
@@ -30,12 +34,15 @@ namespace JustSeat.ViewModel
         int side = 80;
         private double _zoomLevel = 1;
         private Guest _newGuest;
+        private readonly IDialogService _dialogService;
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel()
+        public MainViewModel(IDialogService dialogService)
         {
+            _dialogService = dialogService;
+
             var posMultiplier = 90;
             if (IsInDesignMode)
             {
@@ -55,6 +62,80 @@ namespace JustSeat.ViewModel
             AddDropHandler();
 
             AddMouseWheelZoomHandling();
+
+            AddProjectHandling();
+        }
+
+        private void AddProjectHandling()
+        {
+            NewProjectCommand = new RelayCommand(() => { Items.Clear(); Guests.Clear(); });
+
+            SaveProjectCommand = new RelayCommand(() =>
+            {
+                var settings = new SaveFileDialogSettings
+                {
+                    Title = "Save project",
+                    InitialDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
+                    Filter = "Just Seat Project (*.jsp)|*.jsp",
+                    CheckFileExists = false
+                };
+
+                bool? success = _dialogService.ShowSaveFileDialog(this, settings);
+                if (success == true)
+                {
+                    var serializer = new JSONSerialization.JustSeatJSONSerializer();
+                    try
+                    {
+                        var exported = serializer.Export(new Serialization.JustSeat
+                        {
+                            ZoomLevel = ZoomLevel,
+                            Event = new Serialization.Event
+                            {
+                                NotSeatedGuets = Guests.ToList(),
+                                Tables = Items.OfType<Table>().ToList()
+                            }
+                        });
+
+                        File.WriteAllText(settings.FileName, exported);
+                    }
+                    catch (Exception)
+                    {
+
+                        // TODO: Display
+                    }
+                }
+            });
+
+            LoadProjectCommand = new RelayCommand(() =>
+            {
+                var settings = new OpenFileDialogSettings
+                {
+                    Title = "Open project",
+                    InitialDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
+                    Filter = "Just Seat Project (*.jsp)|*.jsp",
+                };
+
+                bool? success = _dialogService.ShowOpenFileDialog(this, settings);
+                if (success == true)
+                {
+                    var serializer = new JSONSerialization.JustSeatJSONSerializer();
+                    try
+                    { 
+                        var input = File.ReadAllText(settings.FileName);
+                        var model = serializer.Import(input);
+
+                        this.Guests.Clear();
+                        this.Items.Clear();
+
+                        model.Event.NotSeatedGuets.ForEach(g =>  this.Guests.Add(g) );
+                        model.Event.Tables.ForEach(t => this.Items.Add(t));
+                    }
+                    catch (Exception)
+                    {
+                        // TODO: Display
+                    }
+                }
+            });
         }
 
         private void AddMouseWheelZoomHandling()
@@ -81,7 +162,6 @@ namespace JustSeat.ViewModel
                 if (c == null || person == null)
                     return;
                 c.Person = null;
-
                 Guests.Add(person);
             },
             (c) =>
@@ -198,6 +278,10 @@ namespace JustSeat.ViewModel
         public RelayCommand AddTableCommand { get; private set; }
         public RelayCommand<Table> RemoveTableCommand { get; private set; }
         public RelayCommand<Guest> AddNewGuestCommand { get; private set; }
+
+        public RelayCommand NewProjectCommand { get; private set; }
+        public RelayCommand SaveProjectCommand { get; private set; }
+        public RelayCommand LoadProjectCommand { get; private set; }
 
         public ICommand MouseScrollCommand { get; private set; }
 

@@ -9,6 +9,6 @@ namespace JustSeat.Serialization
     public  class JustSeat
     {
         public Event Event { get; set; }
-        public int ZoomLevel { get; set; }
+        public double ZoomLevel { get; set; }
     }
 }
