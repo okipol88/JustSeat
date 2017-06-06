@@ -14,6 +14,7 @@ using MvvmDialogs;
 using System.IO;
 using MvvmDialogs.FrameworkDialogs.OpenFile;
 using MvvmDialogs.FrameworkDialogs.SaveFile;
+using JustSeat.Clipboard;
 
 namespace JustSeat.ViewModel
 {
@@ -35,13 +36,17 @@ namespace JustSeat.ViewModel
         private double _zoomLevel = 1;
         private Guest _newGuest;
         private readonly IDialogService _dialogService;
-
+        private readonly IProvideClipboardText _clipboardTextProvider;
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel(IDialogService dialogService)
+        public MainViewModel(IDialogService dialogService, IProvideClipboardText clipboardTextProvider)
         {
+            if (clipboardTextProvider == null)
+                new ArgumentNullException(nameof(clipboardTextProvider));
+
             _dialogService = dialogService;
+            _clipboardTextProvider = clipboardTextProvider;
 
             var posMultiplier = 90;
             if (IsInDesignMode)
@@ -64,6 +69,35 @@ namespace JustSeat.ViewModel
             AddZoomHandling();
 
             AddProjectHandling();
+
+            AddImportHandling();
+        }
+
+        private void AddImportHandling()
+        {
+            ImportFromClipboardCommand = new RelayCommand(() =>
+            {
+                if (_clipboardTextProvider != null)
+                {
+                    var txt = _clipboardTextProvider.ClipboarText;
+                    var lines  = System.Text.RegularExpressions.Regex.Split(txt, @"\r?\n|\r");
+                    var guests = lines.Select(l =>
+                    {
+
+                        var split = l.Split(new char[] { ' ' });
+                        var person = new Guest();
+                        if (split.Count() > 0)
+                            person.Name = split[0];
+                        if (split.Count() > 1)
+                            person.Surname = split[1];
+
+                        return string.IsNullOrEmpty(person.Name) ? null : person;
+                    }).Where(x => x != null);
+
+                    guests.ToList()
+                    .ForEach(g => Guests.Add(g));
+                }
+            });
         }
 
         private void AddProjectHandling()
@@ -284,6 +318,8 @@ namespace JustSeat.ViewModel
 
         public ICommand ZoomInCommand { get; private set; }
         public ICommand ZoomOutCommand { get; private set; }
+
+        public ICommand ImportFromClipboardCommand { get; private set; }
 
         public double ZoomLevel
         {

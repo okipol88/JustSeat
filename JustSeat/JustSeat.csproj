@@ -86,6 +86,9 @@
     </ApplicationDefinition>
     <Compile Include="AttachedProperties\SupplementaryInteraction.cs" />
     <Compile Include="Behaviors\DragBehavior.cs" />
+    <Compile Include="Clipboard\ClipboardMangement.cs" />
+    <Compile Include="Clipboard\ClipboardTextProvider.cs" />
+    <Compile Include="Clipboard\IProvideClipboardText.cs" />
     <Compile Include="Commands\Model\MouseWheelInfo.cs" />
     <Compile Include="Commands\EventCommandExecuter.cs" />
     <Compile Include="Controls\AutoResizeCanvas.cs" />

@@ -14,6 +14,7 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
+using JustSeat.Clipboard;
 using Microsoft.Practices.ServiceLocation;
 
 namespace JustSeat.ViewModel
@@ -41,6 +42,7 @@ namespace JustSeat.ViewModel
             ////    SimpleIoc.Default.Register<IDataService, DataService>();
             ////}
 
+            SimpleIoc.Default.Register<IProvideClipboardText>(() => new ClipboardTextProvider());
             SimpleIoc.Default.Register<MainViewModel>();
         }
 
