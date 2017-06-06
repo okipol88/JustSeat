@@ -88,8 +88,11 @@
                 <Setter Property="ItemTemplate">
                     <Setter.Value>
                         <DataTemplate>
-                            <Grid Margin="2,1,2,1" Width="30" Height="30" dd:DragDrop.IsDropTarget="True" 
-                                              dd:DragDrop.DropHandler="{Binding Data.GuestOnChairDropHandler, Source={StaticResource bindingProxy}}" >
+                            <Grid Margin="2,1,2,1" Width="30" Height="30" 
+                                  dd:DragDrop.IsDropTarget="True" 
+                                  dd:DragDrop.IsDragSource="True"
+                                  dd:DragDrop.DragHandler="{Binding Data.GuestOnChairDragHandler, Source={StaticResource bindingProxy}}"
+                                  dd:DragDrop.DropHandler="{Binding Data.GuestOnChairDropHandler, Source={StaticResource bindingProxy}}" >
                                 <Grid.Resources>
                                     <localHelpers:BindingProxy x:Key="chairProxy" Data="{Binding}" />
                                 </Grid.Resources>

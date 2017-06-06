@@ -102,6 +102,7 @@
     <Compile Include="Resizing\ResizeThumb.cs" />
     <Compile Include="Resizing\SizeAdorner.cs" />
     <Compile Include="Resizing\SizeChrome.cs" />
+    <Compile Include="ViewModel\Handlers\GuestFromSeatDragHandler.cs" />
     <Compile Include="ViewModel\Handlers\GuestToSeatDropHandler.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />

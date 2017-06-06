@@ -10,6 +10,7 @@ using System.Windows.Interop;
 
 namespace JustSeat.Clipboard
 {
+    // TODO:
     /// <summary>
     /// Provides notifications when the contents of the clipboard is updated.
     /// </summary>

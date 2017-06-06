@@ -25,9 +25,9 @@ namespace JustSeat.Model
         private double _x;
         private double _y;
 
-        public Table()
+        public Table(int initialChairs = 0)
         {
-            Enumerable.Range(0, 2)
+            Enumerable.Range(0, initialChairs)
                 .ToList().ForEach((x) => 
                 {
                     TopChairs.Add(new Chair());

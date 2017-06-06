@@ -158,6 +158,7 @@ namespace JustSeat.ViewModel
                         var input = File.ReadAllText(settings.FileName);
                         var model = serializer.Import(input);
 
+                        this.ZoomLevel = model.ZoomLevel;
                         this.Guests.Clear();
                         this.Items.Clear();
 
@@ -285,6 +286,8 @@ namespace JustSeat.ViewModel
                 RemovePersonOrChairCommand.RaiseCanExecuteChanged();
             };
             GuestOnChairDropHandler = dropHandler;
+
+            GuestOnChairDragHandler = new GuestFromSeatDragHandler();
         }
 
         private void AddNewTable()
@@ -304,6 +307,8 @@ namespace JustSeat.ViewModel
         public ObservableCollection<ICanvasDisplayItem> Items { get; } = new ObservableCollection<ICanvasDisplayItem>();
 
         public IDropTarget GuestOnChairDropHandler { get; private set; }
+        public IDragSource GuestOnChairDragHandler { get; private set; }
+        
 
         public RelayCommand<Chair> RemoveGuestCommand { get; private set; }
         public RelayCommand<Guest> RemoveGuestFromListCommand { get; private set; }
