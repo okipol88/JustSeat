@@ -191,6 +191,13 @@
                         <GridView>
                             <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
                             <GridViewColumn Header="Surname" DisplayMemberBinding="{Binding Surname}" />
+                            <GridViewColumn Width="Auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="X" Command="{Binding Source={StaticResource bindingProxy}, Path=Data.RemoveGuestFromListCommand}"  CommandParameter="{Binding}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>

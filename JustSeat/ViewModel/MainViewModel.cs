@@ -256,6 +256,11 @@ namespace JustSeat.ViewModel
             {
                 return g != null && !string.IsNullOrWhiteSpace(g.Name) && !string.IsNullOrWhiteSpace(g.Surname);
             });
+
+            RemoveGuestFromListCommand = new RelayCommand<Guest>(g =>
+            {
+                Guests.Remove(g);
+            }, g =>  g != null);
         }
 
         private void CreateNewGuestScaffold()
@@ -301,6 +306,7 @@ namespace JustSeat.ViewModel
         public IDropTarget GuestOnChairDropHandler { get; private set; }
 
         public RelayCommand<Chair> RemoveGuestCommand { get; private set; }
+        public RelayCommand<Guest> RemoveGuestFromListCommand { get; private set; }
 
         public RelayCommand<Table> AddTopChairCommand { get; } = new RelayCommand<Table>((table) => { table.TopChairs.Add(new Chair()); });
         public RelayCommand<Table> AddBottomChairCommand { get; } = new RelayCommand<Table>((table) => { table.BottomChairs.Add(new Chair()); });
