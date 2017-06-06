@@ -282,6 +282,9 @@ namespace JustSeat.ViewModel
             var dropHandler = new GuestToSeatDropHandler();
             dropHandler.GuestDropped += (o, e) =>
             {
+                if (e.SourceChairGuest != null)
+                    Guests.Add(e.SourceChairGuest);
+
                 RemoveGuestCommand.RaiseCanExecuteChanged();
                 RemovePersonOrChairCommand.RaiseCanExecuteChanged();
             };

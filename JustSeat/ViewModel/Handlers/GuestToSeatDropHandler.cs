@@ -11,12 +11,14 @@ namespace JustSeat.ViewModel.Handlers
 {
     internal class GuestDroppedEventArgs:EventArgs
     {
-        public GuestDroppedEventArgs(Guest guest)
+        public GuestDroppedEventArgs(Guest targetChairGuest, Guest sourceChairGuest)
         {
-            Guest = guest ?? throw new ArgumentNullException(nameof(guest));
+            TargetChairGuest = targetChairGuest ?? throw new ArgumentNullException(nameof(targetChairGuest));
+            SourceChairGuest = sourceChairGuest;
         }
 
-        public Guest Guest { get; private set; }
+        public Guest TargetChairGuest { get; private set; }
+        public Guest SourceChairGuest { get; private set; }
     }
 
     public class GuestToSeatDropHandler : IDropTarget
@@ -46,13 +48,15 @@ namespace JustSeat.ViewModel.Handlers
             var guest = dropInfo.Data as Guest;
             if (chair == null || guest == null)
                 return;
+
+            var personOnChair = chair.Person;
             chair.Person = guest;
 
             var collection = dropInfo.DragInfo.SourceCollection as ICollection<Guest>;
             if (collection != null)
                 collection.Remove(guest);
 
-            GuestDropped?.Invoke(this, new GuestDroppedEventArgs(guest));
+            GuestDropped?.Invoke(this, new GuestDroppedEventArgs(guest, personOnChair));
         }
     }
 }
